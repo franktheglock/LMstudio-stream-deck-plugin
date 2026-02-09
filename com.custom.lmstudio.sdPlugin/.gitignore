@@ -7,6 +7,11 @@ Thumbs.db
 *.code-workspace
 package-lock.json
 
+# Ignore accidentally created AppData folders
+AppData/
+%APPDATA%/
+**/AppData/
+
 # Ignore Windows batch files (keep the installer)
 *.bat
 !install-streamdeck.bat
