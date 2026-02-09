@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LM Studio - Toggle Server</title>
+    <link rel="stylesheet" href="../html/css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Server Control</div>
+            <div class="sdpi-item-value">
+                <p>Click the button to check server status.</p>
+                <p>LM Studio must be running for this to work.</p>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Server URL</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="text" id="serverUrl" value="http://localhost:1234">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Auto-refresh</div>
+            <div class="sdpi-item-value">
+                <input type="checkbox" id="autoRefresh">
+                <label for="autoRefresh">Check status periodically</label>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Refresh Interval (seconds)</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="refreshInterval" value="30" min="5" max="300">
+            </div>
+        </div>
+    </div>
+    
+    <script src="../html/js/property-inspector.js"></script>
+    <script>
+        // Save settings when they change
+        document.getElementById('serverUrl').addEventListener('change', saveSettings);
+        document.getElementById('autoRefresh').addEventListener('change', saveSettings);
+        document.getElementById('refreshInterval').addEventListener('change', saveSettings);
+        
+        function saveSettings() {
+            const settings = {
+                serverUrl: document.getElementById('serverUrl').value,
+                autoRefresh: document.getElementById('autoRefresh').checked,
+                refreshInterval: parseInt(document.getElementById('refreshInterval').value)
+            };
+            saveSettingsToPlugin(settings);
+        }
+        
+        // Load existing settings
+        window.connectElgatoStreamDeckSocket = connectElgatoStreamDeckSocket;
+    </script>
+</body>
+</html>

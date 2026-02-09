@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+*.code-workspace
+package-lock.json
+
+# Ignore Windows batch files (keep the installer)
+*.bat
+!install-streamdeck.bat
+!/install-streamdeck.bat

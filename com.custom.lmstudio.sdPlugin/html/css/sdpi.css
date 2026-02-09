@@ -1,0 +1,128 @@
+/* Stream Deck Property Inspector Styles */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    background-color: #2d2d2d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
+body {
+    margin: 0;
+    padding: 16px;
+    height: 100%;
+    color: #d0d0d0;
+}
+
+.sdpi-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sdpi-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sdpi-item-label {
+    font-weight: 600;
+    font-size: 12px;
+    color: #9d9d9d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sdpi-item-value {
+    width: 100%;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    padding: 8px 12px;
+    background-color: #3a3a3a;
+    border: 1px solid #4a4a4a;
+    border-radius: 4px;
+    color: #d0d0d0;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #0e76fd;
+}
+
+input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+label {
+    cursor: pointer;
+    user-select: none;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #0e76fd;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0262d6;
+}
+
+button:active {
+    background-color: #024eb1;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+select {
+    cursor: pointer;
+}
+
+p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}

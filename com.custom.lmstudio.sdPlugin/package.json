@@ -1,0 +1,24 @@
+{
+  "name": "com.custom.lmstudio",
+  "version": "1.0.0",
+  "description": "Stream Deck plugin for controlling LM Studio",
+  "main": "plugin.js",
+  "scripts": {
+    "test": "node plugin.js",
+    "build": "esbuild plugin.js --bundle --platform=node --target=node20 --outfile=plugin-bundled.js --external:fs --external:path --external:http --external:https"
+  },
+  "keywords": [
+    "streamdeck",
+    "lmstudio",
+    "ai",
+    "llm"
+  ],
+  "author": "Custom",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.17.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.3"
+  }
+}

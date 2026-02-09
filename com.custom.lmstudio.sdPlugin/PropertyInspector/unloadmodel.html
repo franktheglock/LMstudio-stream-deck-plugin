@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LM Studio - Unload Model</title>
+    <link rel="stylesheet" href="../html/css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Unload Model</div>
+            <div class="sdpi-item-value">
+                <p>Click the button to unload the currently loaded model and free up memory.</p>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Confirmation</div>
+            <div class="sdpi-item-value">
+                <input type="checkbox" id="requireConfirm">
+                <label for="requireConfirm">Require confirmation before unloading</label>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Info</div>
+            <div class="sdpi-item-value">
+                <p style="font-size: 11px; color: #999;">
+                    This will unload the active model from memory. You'll need to load
+                    a model again before making any inference requests.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../html/js/property-inspector.js"></script>
+    <script>
+        document.getElementById('requireConfirm').addEventListener('change', saveSettings);
+        
+        function saveSettings() {
+            const settings = {
+                requireConfirm: document.getElementById('requireConfirm').checked
+            };
+            saveSettingsToPlugin(settings);
+        }
+        
+        window.connectElgatoStreamDeckSocket = connectElgatoStreamDeckSocket;
+    </script>
+</body>
+</html>

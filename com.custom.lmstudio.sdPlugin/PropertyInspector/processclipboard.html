@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>LM Studio - Process Clipboard</title>
+    <link rel="stylesheet" href="../html/css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">System Prompt</div>
+            <textarea class="sdpi-item-value" id="system_prompt" type="textarea" placeholder="e.g. Summarize this text..."></textarea>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Model</div>
+            <select class="sdpi-item-value select" id="model">
+                <option value="">Loading models...</option>
+            </select>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Button Title</div>
+            <input class="sdpi-item-value" id="model_name_display" type="text" placeholder="Clipboard Action">
+        </div>
+    </div>
+
+    <script src="../html/js/property-inspector.js"></script>
+</body>
+</html>

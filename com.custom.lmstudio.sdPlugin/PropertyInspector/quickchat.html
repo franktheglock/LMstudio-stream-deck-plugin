@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LM Studio - Quick Chat</title>
+    <link rel="stylesheet" href="../html/css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Message</div>
+            <div class="sdpi-item-value">
+                <textarea id="message" class="sdpi-item-value" rows="4" 
+                          placeholder="Enter your message here..."></textarea>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Button Label</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="text" id="buttonLabel" 
+                       placeholder="e.g., Ask Question">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Target Model</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="text" id="targetModel" 
+                       placeholder="Leave empty for default model">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Show Response</div>
+            <div class="sdpi-item-value">
+                <input type="checkbox" id="showResponse" checked>
+                <label for="showResponse">Display response preview on button</label>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Copy to Clipboard</div>
+            <div class="sdpi-item-value">
+                <input type="checkbox" id="copyToClipboard">
+                <label for="copyToClipboard">Copy response to clipboard</label>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Message Presets</div>
+            <div class="sdpi-item-value">
+                <select id="presets" class="sdpi-item-value">
+                    <option value="">-- Quick Presets --</option>
+                    <option value="summarize">Summarize clipboard</option>
+                    <option value="code">Explain this code</option>
+                    <option value="grammar">Check grammar</option>
+                    <option value="translate">Translate to English</option>
+                    <option value="ideas">Give me ideas</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Info</div>
+            <div class="sdpi-item-value">
+                <p style="font-size: 11px; color: #999;">
+                    Send predefined messages to LM Studio with a single button press.
+                    Great for frequently used prompts or commands.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../html/js/property-inspector.js"></script>
+    <script>
+        const presetMessages = {
+            summarize: "Please summarize the following text:\n\n",
+            code: "Please explain what this code does:\n\n",
+            grammar: "Please check the grammar and spelling of the following text:\n\n",
+            translate: "Please translate the following text to English:\n\n",
+            ideas: "Please give me 5 creative ideas for:\n\n"
+        };
+        
+        document.getElementById('presets').addEventListener('change', function() {
+            const preset = this.value;
+            const messageEl = document.getElementById('message');
+            if (preset && presetMessages[preset] && messageEl) {
+                messageEl.value = presetMessages[preset];
+                // Trigger input event to let property-inspector.js sync the change
+                messageEl.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+        
+        window.connectElgatoStreamDeckSocket = connectElgatoStreamDeckSocket;
+    </script>
+</body>
+</html>

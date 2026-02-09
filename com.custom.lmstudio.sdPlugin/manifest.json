@@ -1,0 +1,113 @@
+{
+  "Name": "LM Studio Controller",
+  "Version": "1.0.0",
+  "Author": "Custom",
+  "Icon": "images/plugin",
+  "URL": "https://lmstudio.ai",
+  "Description": "Control LM Studio - manage models, server, and settings",
+  "Category": "LM Studio",
+  "CategoryIcon": "images/category",
+  "CodePath": "plugin-bundled.js",
+  "PropertyInspectorPath": "PropertyInspector",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.0"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    },
+    {
+      "Platform": "mac",
+      "MinimumVersion": "10.15"
+    }
+  ],
+  "Nodejs": {
+    "Version": "20"
+  },
+  "Actions": [
+    {
+      "Name": "Toggle Server",
+      "UUID": "com.custom.lmstudio.toggleserver",
+      "Icon": "images/actions/toggle-server",
+      "Tooltip": "Start or stop the LM Studio server",
+      "PropertyInspectorPath": "PropertyInspector/toggleserver.html",
+      "States": [
+        {
+          "Image": "images/actions/server-off",
+          "Name": "Server Off"
+        },
+        {
+          "Image": "images/actions/server-on",
+          "Name": "Server On"
+        }
+      ]
+    },
+    {
+      "Name": "Load Model",
+      "UUID": "com.custom.lmstudio.loadmodel",
+      "Icon": "images/actions/load-model",
+      "Tooltip": "Load a model in LM Studio",
+      "PropertyInspectorPath": "PropertyInspector/loadmodel.html",
+      "States": [
+        {
+          "Image": "images/actions/load-model",
+          "Name": "Load Model"
+        }
+      ]
+    },
+    {
+      "Name": "Unload Model",
+      "UUID": "com.custom.lmstudio.unloadmodel",
+      "Icon": "images/actions/unload-model",
+      "Tooltip": "Unload the current model",
+      "PropertyInspectorPath": "PropertyInspector/unloadmodel.html",
+      "States": [
+        {
+          "Image": "images/actions/unload-model",
+          "Name": "Unload Model"
+        }
+      ]
+    },
+    {
+      "Name": "Server Settings",
+      "UUID": "com.custom.lmstudio.serversettings",
+      "Icon": "images/actions/settings",
+      "Tooltip": "Configure server settings",
+      "PropertyInspectorPath": "PropertyInspector/serversettings.html",
+      "States": [
+        {
+          "Image": "images/actions/settings",
+          "Name": "Server Settings"
+        }
+      ]
+    },
+    {
+      "Name": "Quick Chat",
+      "UUID": "com.custom.lmstudio.quickchat",
+      "Icon": "images/actions/chat",
+      "Tooltip": "Send a predefined message to LM Studio",
+      "PropertyInspectorPath": "PropertyInspector/quickchat.html",
+      "States": [
+        {
+          "Image": "images/actions/chat",
+          "Name": "Quick Chat"
+        }
+      ]
+    },
+    {
+      "Name": "Process Clipboard",
+      "UUID": "com.custom.lmstudio.processclipboard",
+      "Icon": "images/actions/chat",
+      "Tooltip": "Send clipboard content to LM Studio with a system prompt",
+      "PropertyInspectorPath": "PropertyInspector/processclipboard.html",
+      "States": [
+        {
+          "Image": "images/actions/chat",
+          "Name": "Process Clipboard"
+        }
+      ]
+    }
+  ]
+}

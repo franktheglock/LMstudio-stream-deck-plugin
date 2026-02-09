@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LM Studio - Load Model</title>
+    <link rel="stylesheet" href="../html/css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Model Path</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="text" id="modelPath" 
+                       placeholder="e.g., models/llama-2-7b-chat.Q4_K_M.gguf">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Model Name (Display)</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="text" id="modelName" 
+                       placeholder="e.g., Llama 2 7B">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Context Length</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="contextLength" 
+                       value="2048" min="512" max="32768">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">GPU Layers</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="gpuLayers" 
+                       value="0" min="0" max="100">
+            </div>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Mode</div>
+            <div class="sdpi-item-value">
+                <input type="checkbox" id="useLastSettings" checked>
+                <label for="useLastSettings">Use last loaded settings</label>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Available Models</div>
+            <div class="sdpi-item-value">
+                <button id="refreshModels" class="sdpi-item-value">Refresh Model List</button>
+                <select id="availableModels" class="sdpi-item-value" style="margin-top: 8px;">
+                    <option value="">-- Select a model --</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Info</div>
+            <div class="sdpi-item-value">
+                <p style="font-size: 11px; color: #999;">
+                    The model path should be relative to your LM Studio models directory,
+                    or you can select from available models above.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../html/js/property-inspector.js"></script>
+    <script>
+        // Save settings
+        document.getElementById('modelPath').addEventListener('change', saveSettings);
+        document.getElementById('modelName').addEventListener('change', saveSettings);
+        document.getElementById('contextLength').addEventListener('change', saveSettings);
+        document.getElementById('gpuLayers').addEventListener('change', saveSettings);
+        document.getElementById('useLastSettings').addEventListener('change', saveSettings);
+        
+        document.getElementById('availableModels').addEventListener('change', function() {
+            const selected = this.value;
+            if (selected) {
+                document.getElementById('modelPath').value = selected;
+                saveSettings();
+            }
+        });
+        
+        document.getElementById('refreshModels').addEventListener('click', function() {
+            // Request model list from plugin
+            sendToPlugin({ event: 'getModels' });
+        });
+        
+        function saveSettings() {
+            const settings = {
+                modelPath: document.getElementById('modelPath').value,
+                modelName: document.getElementById('modelName').value,
+                contextLength: parseInt(document.getElementById('contextLength').value),
+                gpuLayers: parseInt(document.getElementById('gpuLayers').value),
+                useLastSettings: document.getElementById('useLastSettings').checked
+            };
+            saveSettingsToPlugin(settings);
+        }
+        
+        window.connectElgatoStreamDeckSocket = connectElgatoStreamDeckSocket;
+    </script>
+</body>
+</html>

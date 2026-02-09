@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LM Studio - Server Settings</title>
+    <link rel="stylesheet" href="../html/css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Server Port</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="serverPort" 
+                       value="1234" min="1024" max="65535">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Enable CORS</div>
+            <div class="sdpi-item-value">
+                <input type="checkbox" id="enableCors" checked>
+                <label for="enableCors">Allow cross-origin requests</label>
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Request Timeout (ms)</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="timeout" 
+                       value="5000" min="1000" max="60000">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Max Tokens</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="maxTokens" 
+                       value="-1" min="-1" max="8192">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Temperature</div>
+            <div class="sdpi-item-value">
+                <input class="sdpi-item-value" type="number" id="temperature" 
+                       value="0.7" min="0" max="2" step="0.1">
+            </div>
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Info</div>
+            <div class="sdpi-item-value">
+                <p style="font-size: 11px; color: #999;">
+                    These settings configure how the plugin communicates with LM Studio.
+                    Changes may require restarting the server.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../html/js/property-inspector.js"></script>
+    <script>
+        document.getElementById('serverPort').addEventListener('change', saveSettings);
+        document.getElementById('enableCors').addEventListener('change', saveSettings);
+        document.getElementById('timeout').addEventListener('change', saveSettings);
+        document.getElementById('maxTokens').addEventListener('change', saveSettings);
+        document.getElementById('temperature').addEventListener('change', saveSettings);
+        
+        function saveSettings() {
+            const settings = {
+                serverPort: parseInt(document.getElementById('serverPort').value),
+                enableCors: document.getElementById('enableCors').checked,
+                timeout: parseInt(document.getElementById('timeout').value),
+                maxTokens: parseInt(document.getElementById('maxTokens').value),
+                temperature: parseFloat(document.getElementById('temperature').value)
+            };
+            saveSettingsToPlugin(settings);
+        }
+        
+        window.connectElgatoStreamDeckSocket = connectElgatoStreamDeckSocket;
+    </script>
+</body>
+</html>
