@@ -8,59 +8,14 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-// Debug log file
-const logFilePath = path.join(process.env.APPDATA || __dirname, 'LMStudioPlugin_debug.log');
-const MAX_LOG_BYTES = 40 * 1024 * 1024; // 40 MB
+// Debug logging disabled to prevent large log files
+// Set DEBUG_LOGGING = true below to re-enable if needed for troubleshooting
+const DEBUG_LOGGING = false;
 
 function debugLog(message) {
-    const timestamp = new Date().toISOString();
-    const logMessage = `[${timestamp}] ${message}\n`;
-
-    try {
-        // Cap the log file by keeping only the last MAX_LOG_BYTES bytes if it grows too large
-        try {
-            const stats = fs.statSync(logFilePath);
-            if (stats.size > MAX_LOG_BYTES) {
-                const keep = MAX_LOG_BYTES;
-                const tmpPath = logFilePath + '.tmp';
-
-                // Read and write the last `keep` bytes synchronously in 1MB chunks
-                const fd = fs.openSync(logFilePath, 'r');
-                const out = fs.openSync(tmpPath, 'w');
-                let remaining = keep;
-                let position = Math.max(0, stats.size - keep);
-                const chunk = 1024 * 1024; // 1MB
-
-                while (remaining > 0) {
-                    const toRead = Math.min(chunk, remaining);
-                    const buf = Buffer.alloc(toRead);
-                    fs.readSync(fd, buf, 0, toRead, position);
-                    fs.writeSync(out, buf, 0, toRead);
-                    position += toRead;
-                    remaining -= toRead;
-                }
-
-                fs.closeSync(fd);
-                fs.closeSync(out);
-
-                // Replace original with truncated file
-                fs.renameSync(tmpPath, logFilePath);
-                fs.appendFileSync(logFilePath, `[${new Date().toISOString()}] Log truncated to last ${keep} bytes\n`);
-            }
-        } catch (e) {
-            // If stat/open/read fails, ignore and continue to append
-        }
-
-        fs.appendFileSync(logFilePath, logMessage);
-    } catch (e) {
-        // Ignore file write errors
-    }
-
-    // Guard console logging to avoid EPIPE crashes when stdout is closed
-    try {
+    // No-op when debugging is disabled
+    if (DEBUG_LOGGING) {
         console.log(message);
-    } catch (e) {
-        // Ignore console errors (e.g., broken pipe)
     }
 }
 
