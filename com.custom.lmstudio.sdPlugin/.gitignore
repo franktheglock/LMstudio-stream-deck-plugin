@@ -12,7 +12,7 @@ AppData/
 %APPDATA%/
 **/AppData/
 
-# Ignore Windows batch files (keep the installer)
+# Ignore Windows batch files (keep the installers)
 *.bat
 !install-streamdeck.bat
-!/install-streamdeck.bat
+!install-streamdock.bat

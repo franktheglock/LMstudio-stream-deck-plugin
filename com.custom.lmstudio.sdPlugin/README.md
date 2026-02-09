@@ -38,6 +38,8 @@ A comprehensive Stream Deck plugin for controlling [LM Studio](https://lmstudio.
 
 ### Install the Plugin
 
+#### Elgato Stream Deck (Elgato Hardware - Windows/macOS)
+For users with Elgato Stream Deck hardware:
 1. **Recommended: Installer (Windows)**
    - Run `install-streamdeck.bat` from the repository root to automatically copy the plugin into Stream Deck's plugins directory and attempt a restart of the Stream Deck app.
    - Example: double-click `install-streamdeck.bat` or run from PowerShell:
@@ -53,7 +55,19 @@ A comprehensive Stream Deck plugin for controlling [LM Studio](https://lmstudio.
      - **macOS:** `~/Library/Application Support/com.elgato.StreamDeck/Plugins/`
    - Restart Stream Deck software
 
-4. **Verify Installation**
+#### HotSpot StreamDock (AmpliGame Hardware - Windows)
+For users with AmpliGame StreamDock hardware:
+1. **Recommended: Installer (Windows)**
+   - Run `install-streamdock.bat` from the repository root to automatically copy the plugin into StreamDock's plugins directory and attempt a restart of the StreamDock app.
+   - Example: double-click `install-streamdock.bat` or run from PowerShell:
+     `.\install-streamdock.bat`
+
+2. **Manual Installation**
+   - Copy the `com.custom.lmstudio.sdPlugin` folder to:
+     - **Windows:** `%appdata%\HotSpot\StreamDock\plugins\`
+   - Restart StreamDock software
+
+#### Verify Installation
    - Open Stream Deck software
    - Look for "LM Studio" category in the actions list
    - You should see 5 actions available
