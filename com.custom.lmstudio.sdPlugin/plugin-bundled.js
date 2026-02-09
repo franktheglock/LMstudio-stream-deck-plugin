@@ -3838,12 +3838,7 @@ async function checkServerStatus() {
         });
       }
     });
-    let memoryInfo = null;
-    try {
-      const memResponse = await makeRequest("GET", "/api/v1/memory");
-      memoryInfo = memResponse.data;
-    } catch (e) {
-    }
+    const memoryInfo = null;
     return { running: true, models, loadedInstances, memoryInfo };
   } catch (error) {
     return { running: false, models: [], loadedInstances: [], memoryInfo: null };

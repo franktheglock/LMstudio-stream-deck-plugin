@@ -241,14 +241,7 @@ async function checkServerStatus() {
                 });
             }
         });
-        // Try to get memory info
-        let memoryInfo = null;
-        try {
-            const memResponse = await makeRequest('GET', '/api/v1/memory');
-            memoryInfo = memResponse.data;
-        } catch (e) {
-            // Memory endpoint may not exist in older LM Studio versions
-        }
+        const memoryInfo = null;
         return { running: true, models: models, loadedInstances: loadedInstances, memoryInfo };
     } catch (error) {
         return { running: false, models: [], loadedInstances: [], memoryInfo: null };
