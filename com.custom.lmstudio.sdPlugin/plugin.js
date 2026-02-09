@@ -26,7 +26,8 @@ const ACTIONS = {
     UNLOAD_MODEL: 'com.custom.lmstudio.unloadmodel',
     SERVER_SETTINGS: 'com.custom.lmstudio.serversettings',
     QUICK_CHAT: 'com.custom.lmstudio.quickchat',
-    PROCESS_CLIPBOARD: 'com.custom.lmstudio.processclipboard'
+    PROCESS_CLIPBOARD: 'com.custom.lmstudio.processclipboard',
+    MODEL_STATUS: 'com.custom.lmstudio.modelstatus'
 };
 
 // Global plugin instance
@@ -35,6 +36,94 @@ let websocket = null;
 let contexts = {};
 let serverStatus = {};
 let connectionParams = null; // Store connection parameters for reconnection
+let modelStatusContexts = new Set();
+let statusInterval = null;
+
+function generateStatusSvg(modelName, isLoaded, isRunning, memoryInfo, instance) {
+    const color = isRunning ? (isLoaded ? '#4CAF50' : '#FFC107') : '#F44336';
+    const statusText = isRunning ? (isLoaded ? 'Loaded' : 'No Model') : 'Stopped';
+    const displayName = modelName || 'LM Studio';
+    
+    // Split name for 2 lines if needed
+    let line1 = displayName;
+    let line2 = '';
+    if (displayName.length > 12) {
+        line1 = displayName.substring(0, 12);
+        line2 = displayName.substring(12, 24);
+    }
+
+    // VRAM/Context line
+    let vramText = '';
+    let contextText = '';
+    if (isLoaded && memoryInfo && instance) {
+        // Try to get VRAM usage
+        if (memoryInfo.ram && memoryInfo.ram.used > 0) {
+            const vramGB = (memoryInfo.ram.used / (1024*1024*1024)).toFixed(1);
+            vramText = `VRAM: ${vramGB}GB`;
+        }
+        // Context length
+        if (instance.context_length) {
+            contextText = `Ctx: ${instance.context_length}`;
+        }
+    }
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+    <rect width="144" height="144" fill="#1d1d1d" />
+    <circle cx="72" cy="72" r="65" stroke="${color}" stroke-width="4" fill="none" opacity="0.4" />
+    <text x="72" y="45" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">${line1}</text>
+    <text x="72" y="65" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">${line2}</text>
+    <text x="72" y="105" font-family="Arial" font-size="20" fill="${color}" text-anchor="middle" font-weight="bold">${statusText}</text>
+    ${vramText ? `<text x="72" y="125" font-family="Arial" font-size="12" fill="#aaaaaa" text-anchor="middle">${vramText}</text>` : ''}
+    ${contextText ? `<text x="72" y="138" font-family="Arial" font-size="12" fill="#aaaaaa" text-anchor="middle">${contextText}</text>` : ''}
+    </svg>`;
+}
+
+async function updateAllModelStatus() {
+    if (modelStatusContexts.size === 0) return;
+    
+    const status = await checkServerStatus();
+    let modelName = '';
+    let isLoaded = false;
+    let instance = null;
+    
+    if (status.loadedInstances && status.loadedInstances.length > 0) {
+        instance = status.loadedInstances[0];
+        modelName = instance.display_name || instance.id;
+        modelName = modelName.split('/').pop().replace('.gguf', '');
+        isLoaded = true;
+    }
+    
+    const svg = generateStatusSvg(modelName, isLoaded, status.running, status.memoryInfo, instance);
+    const base64Icon = 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+    
+    for (const context of modelStatusContexts) {
+        if (websocket && websocket.readyState === 1) {
+             const json = {
+                event: 'setImage',
+                context: context,
+                payload: {
+                    image: base64Icon,
+                    target: 0
+                }
+            };
+            websocket.send(JSON.stringify(json));
+        }
+    }
+}
+
+function startStatusPolling() {
+    if (!statusInterval) {
+        statusInterval = setInterval(updateAllModelStatus, 2000);
+        updateAllModelStatus();
+    }
+}
+
+function stopStatusPolling() {
+    if (statusInterval && modelStatusContexts.size === 0) {
+        clearInterval(statusInterval);
+        statusInterval = null;
+    }
+}
 
 // Helper function to make HTTP requests
 async function makeRequest(method, path, data = null) {
@@ -145,14 +234,24 @@ async function checkServerStatus() {
                     loadedInstances.push({
                         id: instance.id,
                         model: model.key,
-                        display_name: model.display_name
+                        display_name: model.display_name,
+                        gpu_layers: instance.gpu_layers,
+                        context_length: instance.context_length
                     });
                 });
             }
         });
-        return { running: true, models: models, loadedInstances: loadedInstances };
+        // Try to get memory info
+        let memoryInfo = null;
+        try {
+            const memResponse = await makeRequest('GET', '/api/v1/memory');
+            memoryInfo = memResponse.data;
+        } catch (e) {
+            // Memory endpoint may not exist in older LM Studio versions
+        }
+        return { running: true, models: models, loadedInstances: loadedInstances, memoryInfo };
     } catch (error) {
-        return { running: false, models: [], loadedInstances: [] };
+        return { running: false, models: [], loadedInstances: [], memoryInfo: null };
     }
 }
 
@@ -646,10 +745,17 @@ function onWillAppear(context, settings, action, device) {
         if (title) {
             setTitle(context, title);
         }
+    } else if (action === ACTIONS.MODEL_STATUS) {
+        modelStatusContexts.add(context);
+        startStatusPolling();
     }
 }
 
 function onWillDisappear(context) {
+    if (contexts[context] && contexts[context].action === ACTIONS.MODEL_STATUS) {
+        modelStatusContexts.delete(context);
+        stopStatusPolling();
+    }
     delete contexts[context];
 }
 

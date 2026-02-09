@@ -108,6 +108,19 @@
           "Name": "Process Clipboard"
         }
       ]
+    },
+    {
+      "Name": "Model Status",
+      "UUID": "com.custom.lmstudio.modelstatus",
+      "Icon": "images/actions/load-model",
+      "Tooltip": "Show current loaded model status",
+      "PropertyInspectorPath": "PropertyInspector/loadmodel.html",
+      "States": [
+        {
+          "Image": "images/actions/load-model",
+          "Name": "Model Status"
+        }
+      ]
     }
   ]
 }

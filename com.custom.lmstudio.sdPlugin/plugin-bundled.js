@@ -3641,15 +3641,8 @@ var WebSocket = require_ws();
 var fs = require("fs");
 var path = require("path");
 var { exec } = require("child_process");
-var logFilePath = path.join(process.env.APPDATA || __dirname, "LMStudioPlugin_debug.log");
 function debugLog(message) {
-  const timestamp = (/* @__PURE__ */ new Date()).toISOString();
-  const logMessage2 = `[${timestamp}] ${message}
-`;
-  try {
-    fs.appendFileSync(logFilePath, logMessage2);
-  } catch (e) {
-  }
+  return;
 }
 var LM_STUDIO_CONFIG = {
   baseUrl: "http://localhost:1234",
@@ -3662,12 +3655,86 @@ var ACTIONS = {
   UNLOAD_MODEL: "com.custom.lmstudio.unloadmodel",
   SERVER_SETTINGS: "com.custom.lmstudio.serversettings",
   QUICK_CHAT: "com.custom.lmstudio.quickchat",
-  PROCESS_CLIPBOARD: "com.custom.lmstudio.processclipboard"
+  PROCESS_CLIPBOARD: "com.custom.lmstudio.processclipboard",
+  MODEL_STATUS: "com.custom.lmstudio.modelstatus"
 };
 var pluginUUID = null;
 var websocket = null;
 var contexts = {};
 var connectionParams = null;
+var modelStatusContexts = /* @__PURE__ */ new Set();
+var statusInterval = null;
+function generateStatusSvg(modelName, isLoaded, isRunning, memoryInfo, instance) {
+  const color = isRunning ? isLoaded ? "#4CAF50" : "#FFC107" : "#F44336";
+  const statusText = isRunning ? isLoaded ? "Loaded" : "No Model" : "Stopped";
+  const displayName = modelName || "LM Studio";
+  let line1 = displayName;
+  let line2 = "";
+  if (displayName.length > 12) {
+    line1 = displayName.substring(0, 12);
+    line2 = displayName.substring(12, 24);
+  }
+  let vramText = "";
+  let contextText = "";
+  if (isLoaded && memoryInfo && instance) {
+    if (memoryInfo.ram && memoryInfo.ram.used > 0) {
+      const vramGB = (memoryInfo.ram.used / (1024 * 1024 * 1024)).toFixed(1);
+      vramText = `VRAM: ${vramGB}GB`;
+    }
+    if (instance.context_length) {
+      contextText = `Ctx: ${instance.context_length}`;
+    }
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+    <rect width="144" height="144" fill="#1d1d1d" />
+    <circle cx="72" cy="72" r="65" stroke="${color}" stroke-width="4" fill="none" opacity="0.4" />
+    <text x="72" y="45" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">${line1}</text>
+    <text x="72" y="65" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">${line2}</text>
+    <text x="72" y="105" font-family="Arial" font-size="20" fill="${color}" text-anchor="middle" font-weight="bold">${statusText}</text>
+    ${vramText ? `<text x="72" y="125" font-family="Arial" font-size="12" fill="#aaaaaa" text-anchor="middle">${vramText}</text>` : ""}
+    ${contextText ? `<text x="72" y="138" font-family="Arial" font-size="12" fill="#aaaaaa" text-anchor="middle">${contextText}</text>` : ""}
+    </svg>`;
+}
+async function updateAllModelStatus() {
+  if (modelStatusContexts.size === 0) return;
+  const status = await checkServerStatus();
+  let modelName = "";
+  let isLoaded = false;
+  let instance = null;
+  if (status.loadedInstances && status.loadedInstances.length > 0) {
+    instance = status.loadedInstances[0];
+    modelName = instance.display_name || instance.id;
+    modelName = modelName.split("/").pop().replace(".gguf", "");
+    isLoaded = true;
+  }
+  const svg = generateStatusSvg(modelName, isLoaded, status.running, status.memoryInfo, instance);
+  const base64Icon = "data:image/svg+xml;base64," + Buffer.from(svg).toString("base64");
+  for (const context of modelStatusContexts) {
+    if (websocket && websocket.readyState === 1) {
+      const json = {
+        event: "setImage",
+        context,
+        payload: {
+          image: base64Icon,
+          target: 0
+        }
+      };
+      websocket.send(JSON.stringify(json));
+    }
+  }
+}
+function startStatusPolling() {
+  if (!statusInterval) {
+    statusInterval = setInterval(updateAllModelStatus, 2e3);
+    updateAllModelStatus();
+  }
+}
+function stopStatusPolling() {
+  if (statusInterval && modelStatusContexts.size === 0) {
+    clearInterval(statusInterval);
+    statusInterval = null;
+  }
+}
 async function makeRequest(method, path2, data = null) {
   return new Promise((resolve, reject) => {
     const url = new URL(path2, LM_STUDIO_CONFIG.baseUrl);
@@ -3764,35 +3831,62 @@ async function checkServerStatus() {
           loadedInstances.push({
             id: instance.id,
             model: model.key,
-            display_name: model.display_name
+            display_name: model.display_name,
+            gpu_layers: instance.gpu_layers,
+            context_length: instance.context_length
           });
         });
       }
     });
-    return { running: true, models, loadedInstances };
+    let memoryInfo = null;
+    try {
+      const memResponse = await makeRequest("GET", "/api/v1/memory");
+      memoryInfo = memResponse.data;
+    } catch (e) {
+    }
+    return { running: true, models, loadedInstances, memoryInfo };
   } catch (error) {
-    return { running: false, models: [], loadedInstances: [] };
+    return { running: false, models: [], loadedInstances: [], memoryInfo: null };
   }
 }
 async function loadModel(modelPath, config = {}) {
   try {
-    const payload = {
-      model: modelPath
-    };
-    if (config && Object.keys(config).length > 0) {
-      payload.config = {
-        context_length: parseInt(config.context_length) || 2048
-      };
-      if (config.gpu_offload) {
-        payload.config.gpu_offload = {
-          ratio: parseFloat(config.gpu_offload.ratio) || 0
-        };
+    if (config && Object.keys(config).length > 0 && !config.useLastSettings) {
+      const payloadWithConfig = { model: modelPath, config };
+      debugLog(`Trying load with config: ${JSON.stringify(payloadWithConfig)}`);
+      const response = await makeRequest("POST", "/api/v1/models/load", payloadWithConfig);
+      debugLog(`Load with config status: ${response.status}`);
+      debugLog(`Load with config body: ${JSON.stringify(response.data).substring(0, 1e3)}${JSON.stringify(response.data).length > 1e3 ? "..." : ""}`);
+      if (response.status === 200) {
+        return { success: true, data: response.data, usedFallback: false };
       }
+      debugLog("Load with config failed; will try alternate config shape (top-level fields)");
+      const altPayload = {
+        model: modelPath,
+        context_length: config.context_length,
+        gpu_layers: config.gpu_layers
+      };
+      debugLog(`Trying alternate payload: ${JSON.stringify(altPayload)}`);
+      const altResp = await makeRequest("POST", "/api/v1/models/load", altPayload);
+      debugLog(`Alt payload status: ${altResp.status}`);
+      debugLog(`Alt payload body: ${JSON.stringify(altResp.data).substring(0, 1e3)}${JSON.stringify(altResp.data).length > 1e3 ? "..." : ""}`);
+      if (altResp.status === 200) {
+        return { success: true, data: altResp.data, usedFallback: true };
+      }
+      debugLog("Alternate payload failed; will retry without config");
     }
-    debugLog(`POST /api/v1/models/load Payload: ${JSON.stringify(payload)}`);
-    const response = await makeRequest("POST", "/api/v1/models/load", payload);
-    return { success: response.status === 200, data: response.data };
+    const payload = { model: modelPath };
+    debugLog(`Retrying load without config: ${JSON.stringify(payload)}`);
+    const response2 = await makeRequest("POST", "/api/v1/models/load", payload);
+    debugLog(`Load without config status: ${response2.status}`);
+    debugLog(`Load without config body: ${JSON.stringify(response2.data).substring(0, 1e3)}${JSON.stringify(response2.data).length > 1e3 ? "..." : ""}`);
+    if (response2.status === 200) {
+      return { success: true, data: response2.data, usedFallback: true };
+    }
+    const errDetail = response2.data && response2.data.error ? response2.data.error : `API returned status ${response2.status}`;
+    return { success: false, error: errDetail };
   } catch (error) {
+    debugLog(`Load Model Exception: ${error.stack || error.message}`);
     return { success: false, error: error.message };
   }
 }
@@ -3938,19 +4032,7 @@ function showOk(context) {
   }
 }
 function logMessage(message) {
-  debugLog(`[LM Studio] ${message}`);
-  if (websocket && websocket.readyState === 1) {
-    const json = {
-      event: "logMessage",
-      payload: {
-        message: `[LM Studio] ${message}`
-      }
-    };
-    try {
-      websocket.send(JSON.stringify(json));
-    } catch (e) {
-    }
-  }
+  return;
 }
 async function handleToggleServer(context, settings) {
   const status = await checkServerStatus();
@@ -3999,18 +4081,27 @@ async function handleLoadModel(context, settings) {
   setTitle(context, "Loading...");
   let config = {};
   if (!useLastSettings) {
+    const gpuLayersInt = parseInt(settings.gpuLayers) || 0;
     config = {
       context_length: parseInt(settings.contextLength) || 2048,
+      gpu_layers: gpuLayersInt,
       gpu_offload: {
-        ratio: (parseInt(settings.gpuLayers) || 0) / 100
+        ratio: gpuLayersInt / 100
       }
     };
+    debugLog(`Constructed load config: ${JSON.stringify(config)}`);
   }
   const result = await loadModel(modelPath, config);
   if (result.success) {
-    logMessage("Model loaded successfully");
-    showOk(context);
-    setTitle(context, modelName);
+    if (result.usedFallback) {
+      logMessage("Model loaded successfully, but custom settings were ignored by the server; used default settings");
+      showOk(context);
+      setTitle(context, `${modelName} (default)`);
+    } else {
+      logMessage("Model loaded successfully with requested settings");
+      showOk(context);
+      setTitle(context, modelName);
+    }
   } else {
     logMessage(`Failed to load model: ${result.error || "Unknown error"}`);
     showAlert(context);
@@ -4144,9 +4235,16 @@ function onWillAppear(context, settings, action, device) {
     if (title) {
       setTitle(context, title);
     }
+  } else if (action === ACTIONS.MODEL_STATUS) {
+    modelStatusContexts.add(context);
+    startStatusPolling();
   }
 }
 function onWillDisappear(context) {
+  if (contexts[context] && contexts[context].action === ACTIONS.MODEL_STATUS) {
+    modelStatusContexts.delete(context);
+    stopStatusPolling();
+  }
   delete contexts[context];
 }
 function onDidReceiveSettings(context, settings, action) {
@@ -4275,18 +4373,10 @@ if (require.main === module) {
   debugLog(`Parsed args - Port: ${inPort}, UUID: ${inPluginUUID}, Event: ${inRegisterEvent}`);
   if (inPort && inPluginUUID && inRegisterEvent) {
     process.on("uncaughtException", (error) => {
-      if (error.code === "EPIPE" || error.syscall === "write") return;
       debugLog(`UNCAUGHT EXCEPTION: ${error.stack || error}`);
     });
     process.on("unhandledRejection", (reason, promise) => {
-      if (reason && (reason.code === "EPIPE" || reason.syscall === "write")) return;
       debugLog(`UNHANDLED REJECTION: ${reason}`);
-    });
-    process.stderr.on("error", (err) => {
-      if (err.code === "EPIPE") return;
-    });
-    process.stdout.on("error", (err) => {
-      if (err.code === "EPIPE") return;
     });
     debugLog("Calling connectElgatoStreamDeckSocket...");
     connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo);
