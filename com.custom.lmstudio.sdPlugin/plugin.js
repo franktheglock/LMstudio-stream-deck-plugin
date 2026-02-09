@@ -8,15 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-// Debug logging disabled to prevent large log files
-// Set DEBUG_LOGGING = true below to re-enable if needed for troubleshooting
-const DEBUG_LOGGING = false;
-
+// Logging disabled to prevent large log files
 function debugLog(message) {
-    // No-op when debugging is disabled
-    if (DEBUG_LOGGING) {
-        console.log(message);
-    }
+    return;
 }
 
 // LM Studio API configuration
@@ -407,20 +401,7 @@ function showOk(context) {
 }
 
 function logMessage(message) {
-    debugLog(`[LM Studio] ${message}`);
-    if (websocket && websocket.readyState === 1) {
-        const json = {
-            event: 'logMessage',
-            payload: {
-                message: `[LM Studio] ${message}`
-            }
-        };
-        try {
-            websocket.send(JSON.stringify(json));
-        } catch (e) {
-            // Ignore send errors
-        }
-    }
+    return;
 }
 
 // Action handlers
