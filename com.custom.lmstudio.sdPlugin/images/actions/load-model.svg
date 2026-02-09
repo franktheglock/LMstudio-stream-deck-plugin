@@ -1,9 +1,1 @@
-<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
-  <rect width="144" height="144" fill="#1a1a1a"/>
-  <rect x="40" y="50" width="64" height="44" rx="4" fill="none" stroke="#4da6ff" stroke-width="3"/>
-  <path d="M 72 70 L 82 80 L 72 90 L 62 80 Z" fill="#4da6ff"/>
-  <rect x="48" y="58" width="8" height="4" fill="#4da6ff"/>
-  <rect x="60" y="58" width="8" height="4" fill="#4da6ff"/>
-  <rect x="48" y="84" width="8" height="4" fill="#4da6ff"/>
-  <rect x="60" y="84" width="8" height="4" fill="#4da6ff"/>
-</svg>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="144" height="144" rx="18" fill="#111827"/><path d="M42 92L72 112L102 92V62L72 42L42 62Z" stroke="#8B5CF6" stroke-width="6" fill="none"/><path d="M72 20V55" stroke="#34D399" stroke-width="8" stroke-linecap="round"/><path d="M60 45L72 57L84 45" stroke="#34D399" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>

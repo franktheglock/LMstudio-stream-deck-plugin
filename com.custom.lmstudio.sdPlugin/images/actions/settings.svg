@@ -1,13 +1,1 @@
-<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
-  <rect width="144" height="144" fill="#1a1a1a"/>
-  <circle cx="72" cy="72" r="42" fill="none" stroke="#9d9d9d" stroke-width="3"/>
-  <circle cx="72" cy="72" r="8" fill="#9d9d9d"/>
-  <line x1="72" y1="38" x2="72" y2="50" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="72" y1="94" x2="72" y2="106" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="96" y1="56" x2="88" y2="64" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="56" y1="80" x2="48" y2="88" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="106" y1="72" x2="94" y2="72" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="50" y1="72" x2="38" y2="72" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="96" y1="88" x2="88" y2="80" stroke="#9d9d9d" stroke-width="3"/>
-  <line x1="56" y1="64" x2="48" y2="56" stroke="#9d9d9d" stroke-width="3"/>
-</svg>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="144" height="144" rx="18" fill="#111827"/><circle cx="72" cy="72" r="32" stroke="#9CA3AF" stroke-width="12" fill="none"/><path d="M72 24V40M72 104V120M24 72H40M104 72H120M38.05 38.05L49.37 49.37M94.63 94.63L105.95 105.95M38.05 105.95L49.37 94.63M94.63 49.37L105.95 38.05" stroke="#9CA3AF" stroke-width="12" stroke-linecap="round"/></svg>
