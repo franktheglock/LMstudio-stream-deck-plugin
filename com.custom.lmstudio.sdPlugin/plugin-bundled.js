@@ -3724,7 +3724,13 @@ async function updateAllModelStatus() {
     modelName = modelName.split("/").pop().replace(".gguf", "");
     isLoaded = true;
   }
-  const svg = generateStatusSvg(modelName, isLoaded, status.running, status.memoryInfo, instance);
+  const svg = generateStatusSvg(
+    modelName,
+    isLoaded,
+    status.running,
+    status.memoryInfo,
+    instance
+  );
   const base64Icon = "data:image/svg+xml;base64," + Buffer.from(svg).toString("base64");
   for (const context of modelStatusContexts) {
     if (websocket && websocket.readyState === 1) {
@@ -3769,14 +3775,18 @@ async function makeRequest(method, path2, data = null) {
     if (data) {
       const bodyStr = JSON.stringify(data);
       options.headers["Content-Length"] = Buffer.byteLength(bodyStr);
-      debugLog(`Request Body: ${bodyStr.substring(0, 500)}${bodyStr.length > 500 ? "..." : ""}`);
+      debugLog(
+        `Request Body: ${bodyStr.substring(0, 500)}${bodyStr.length > 500 ? "..." : ""}`
+      );
     }
     const req = http.request(options, (res) => {
       let body = "";
       res.on("data", (chunk) => body += chunk);
       res.on("end", () => {
         debugLog(`HTTP Response: ${res.statusCode}`);
-        debugLog(`Response Body: ${body.substring(0, 500)}${body.length > 500 ? "..." : ""}`);
+        debugLog(
+          `Response Body: ${body.substring(0, 500)}${body.length > 500 ? "..." : ""}`
+        );
         try {
           const response = body ? JSON.parse(body) : {};
           resolve({ status: res.statusCode, data: response });
@@ -3856,9 +3866,19 @@ async function checkServerStatus() {
       }
     });
     const memoryInfo = null;
-    return { running: true, models, loadedInstances, memoryInfo };
+    return {
+      running: true,
+      models,
+      loadedInstances,
+      memoryInfo
+    };
   } catch (error) {
-    return { running: false, models: [], loadedInstances: [], memoryInfo: null };
+    return {
+      running: false,
+      models: [],
+      loadedInstances: [],
+      memoryInfo: null
+    };
   }
 }
 async function loadModel(modelPath, config = {}) {
@@ -3866,22 +3886,36 @@ async function loadModel(modelPath, config = {}) {
     if (config && Object.keys(config).length > 0 && !config.useLastSettings) {
       const payloadWithConfig = { model: modelPath, config };
       debugLog(`Trying load with config: ${JSON.stringify(payloadWithConfig)}`);
-      const response = await makeRequest("POST", "/api/v1/models/load", payloadWithConfig);
+      const response = await makeRequest(
+        "POST",
+        "/api/v1/models/load",
+        payloadWithConfig
+      );
       debugLog(`Load with config status: ${response.status}`);
-      debugLog(`Load with config body: ${JSON.stringify(response.data).substring(0, 1e3)}${JSON.stringify(response.data).length > 1e3 ? "..." : ""}`);
+      debugLog(
+        `Load with config body: ${JSON.stringify(response.data).substring(0, 1e3)}${JSON.stringify(response.data).length > 1e3 ? "..." : ""}`
+      );
       if (response.status === 200) {
         return { success: true, data: response.data, usedFallback: false };
       }
-      debugLog("Load with config failed; will try alternate config shape (top-level fields)");
+      debugLog(
+        "Load with config failed; will try alternate config shape (top-level fields)"
+      );
       const altPayload = {
         model: modelPath,
         context_length: config.context_length,
         gpu_layers: config.gpu_layers
       };
       debugLog(`Trying alternate payload: ${JSON.stringify(altPayload)}`);
-      const altResp = await makeRequest("POST", "/api/v1/models/load", altPayload);
+      const altResp = await makeRequest(
+        "POST",
+        "/api/v1/models/load",
+        altPayload
+      );
       debugLog(`Alt payload status: ${altResp.status}`);
-      debugLog(`Alt payload body: ${JSON.stringify(altResp.data).substring(0, 1e3)}${JSON.stringify(altResp.data).length > 1e3 ? "..." : ""}`);
+      debugLog(
+        `Alt payload body: ${JSON.stringify(altResp.data).substring(0, 1e3)}${JSON.stringify(altResp.data).length > 1e3 ? "..." : ""}`
+      );
       if (altResp.status === 200) {
         return { success: true, data: altResp.data, usedFallback: true };
       }
@@ -3891,7 +3925,9 @@ async function loadModel(modelPath, config = {}) {
     debugLog(`Retrying load without config: ${JSON.stringify(payload)}`);
     const response2 = await makeRequest("POST", "/api/v1/models/load", payload);
     debugLog(`Load without config status: ${response2.status}`);
-    debugLog(`Load without config body: ${JSON.stringify(response2.data).substring(0, 1e3)}${JSON.stringify(response2.data).length > 1e3 ? "..." : ""}`);
+    debugLog(
+      `Load without config body: ${JSON.stringify(response2.data).substring(0, 1e3)}${JSON.stringify(response2.data).length > 1e3 ? "..." : ""}`
+    );
     if (response2.status === 200) {
       return { success: true, data: response2.data, usedFallback: true };
     }
@@ -3949,7 +3985,10 @@ async function sendChatMessage(message, model = null, systemPrompt = null) {
     };
     const response = await makeRequest("POST", "/v1/chat/completions", payload);
     if (response.status !== 200) {
-      return { success: false, error: `API returned status ${response.status}` };
+      return {
+        success: false,
+        error: `API returned status ${response.status}`
+      };
     }
     return { success: true, data: response.data };
   } catch (error) {
@@ -3958,14 +3997,18 @@ async function sendChatMessage(message, model = null, systemPrompt = null) {
 }
 async function getClipboard() {
   return new Promise((resolve) => {
-    exec('powershell -Command "Get-Clipboard"', { encoding: "utf8" }, (error, stdout) => {
-      if (error) {
-        debugLog(`Clipboard Error: ${error.message}`);
-        resolve("");
-        return;
+    exec(
+      'powershell -Command "Get-Clipboard"',
+      { encoding: "utf8" },
+      (error, stdout) => {
+        if (error) {
+          debugLog(`Clipboard Error: ${error.message}`);
+          resolve("");
+          return;
+        }
+        resolve(stdout.trim());
       }
-      resolve(stdout.trim());
-    });
+    );
   });
 }
 async function setClipboard(text) {
@@ -4089,7 +4132,9 @@ async function handleLoadModel(context, settings) {
     showAlert(context);
     return;
   }
-  logMessage(`Loading model: ${modelPath} (Custom Settings: ${!useLastSettings})`);
+  logMessage(
+    `Loading model: ${modelPath} (Custom Settings: ${!useLastSettings})`
+  );
   setTitle(context, "Loading...");
   let config = {};
   if (!useLastSettings) {
@@ -4106,7 +4151,9 @@ async function handleLoadModel(context, settings) {
   const result = await loadModel(modelPath, config);
   if (result.success) {
     if (result.usedFallback) {
-      logMessage("Model loaded successfully, but custom settings were ignored by the server; used default settings");
+      logMessage(
+        "Model loaded successfully, but custom settings were ignored by the server; used default settings"
+      );
       showOk(context);
       setTitle(context, `${modelName} (default)`);
     } else {
@@ -4129,7 +4176,9 @@ async function handleUnloadModel(context, settings) {
     return;
   }
   const instanceToUnload = status.loadedInstances[0];
-  logMessage(`Unloading model: ${instanceToUnload.display_name || instanceToUnload.id}`);
+  logMessage(
+    `Unloading model: ${instanceToUnload.display_name || instanceToUnload.id}`
+  );
   setTitle(context, "Unloading...");
   const result = await unloadModel(instanceToUnload.id);
   if (result.success) {
@@ -4209,7 +4258,9 @@ async function handleProcessClipboard(context, settings) {
       }
     }, 3e3);
   } else {
-    logMessage(`Failed to process clipboard: ${result.error || "Unknown error"}`);
+    logMessage(
+      `Failed to process clipboard: ${result.error || "Unknown error"}`
+    );
     showAlert(context);
     setTitle(context, "Failed");
   }
@@ -4336,7 +4387,9 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
     };
     websocket.onclose = function() {
       debugLog("WebSocket closed - scheduling reconnect in 5 seconds");
-      logMessage("Plugin disconnected from Stream Deck - reconnecting in 5 seconds...");
+      logMessage(
+        "Plugin disconnected from Stream Deck - reconnecting in 5 seconds..."
+      );
       setTimeout(() => {
         if (connectionParams) {
           debugLog("Attempting reconnection...");
@@ -4352,7 +4405,9 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
   } catch (error) {
     debugLog(`CATCH BLOCK: Failed to create WebSocket: ${error.message}`);
     debugLog(`Error stack: ${error.stack}`);
-    logMessage(`Failed to create WebSocket: ${error.message} - retrying in 5 seconds...`);
+    logMessage(
+      `Failed to create WebSocket: ${error.message} - retrying in 5 seconds...`
+    );
     setTimeout(() => {
       if (connectionParams) {
         debugLog("Retrying after catch block error...");
@@ -4382,7 +4437,9 @@ if (require.main === module) {
   const inPluginUUID = parseArgValue("-pluginUUID");
   const inRegisterEvent = parseArgValue("-registerEvent");
   const inInfo = parseArgValue("-info");
-  debugLog(`Parsed args - Port: ${inPort}, UUID: ${inPluginUUID}, Event: ${inRegisterEvent}`);
+  debugLog(
+    `Parsed args - Port: ${inPort}, UUID: ${inPluginUUID}, Event: ${inRegisterEvent}`
+  );
   if (inPort && inPluginUUID && inRegisterEvent) {
     process.on("uncaughtException", (error) => {
       debugLog(`UNCAUGHT EXCEPTION: ${error.stack || error}`);
@@ -4391,10 +4448,17 @@ if (require.main === module) {
       debugLog(`UNHANDLED REJECTION: ${reason}`);
     });
     debugLog("Calling connectElgatoStreamDeckSocket...");
-    connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo);
+    connectElgatoStreamDeckSocket(
+      inPort,
+      inPluginUUID,
+      inRegisterEvent,
+      inInfo
+    );
   } else {
     debugLog("ERROR: Missing required Stream Deck connection args");
-    debugLog("Usage: node plugin.js -port <port> -pluginUUID <uuid> -registerEvent <event> -info <info>");
+    debugLog(
+      "Usage: node plugin.js -port <port> -pluginUUID <uuid> -registerEvent <event> -info <info>"
+    );
     process.exit(1);
   }
 } else if (typeof module !== "undefined" && module.exports) {
