@@ -1,1 +1,32 @@
-<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="144" height="144" rx="18" fill="#111827"/><path d="M30 40H114C120.627 40 126 45.3726 126 52V92C126 98.6274 120.627 104 114 104H48L30 120V52C30 45.3726 35.3726 40 42 40" fill="#4F46E5"/><circle cx="58" cy="72" r="6" fill="white"/><circle cx="78" cy="72" r="6" fill="white"/><circle cx="98" cy="72" r="6" fill="white"/></svg>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="chatBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="chatBubble" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <filter id="chatGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="144" height="144" rx="18" fill="url(#chatBg)"/>
+  <!-- Main chat bubble -->
+  <path d="M28 42C28 37.582 31.582 34 36 34H108C112.418 34 116 37.582 116 42V82C116 86.418 112.418 90 108 90H56L36 108V90C31.582 90 28 86.418 28 82V42Z" fill="url(#chatBubble)" filter="url(#chatGlow)"/>
+  <!-- AI sparkle/brain lines inside bubble -->
+  <circle cx="52" cy="62" r="5" fill="white" opacity="0.9"/>
+  <circle cx="72" cy="62" r="5" fill="white" opacity="0.9"/>
+  <circle cx="92" cy="62" r="5" fill="white" opacity="0.9"/>
+  <!-- Connecting line between dots -->
+  <line x1="57" y1="62" x2="67" y2="62" stroke="white" stroke-width="2" opacity="0.5"/>
+  <line x1="77" y1="62" x2="87" y2="62" stroke="white" stroke-width="2" opacity="0.5"/>
+  <!-- Small sparkle effect -->
+  <path d="M108 30L110 26L112 30L116 32L112 34L110 38L108 34L104 32Z" fill="#C4B5FD" opacity="0.7"/>
+  <path d="M120 46L121 43L122 46L125 47L122 48L121 51L120 48L117 47Z" fill="#A78BFA" opacity="0.5"/>
+</svg>

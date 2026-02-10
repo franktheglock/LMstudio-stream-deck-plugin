@@ -1,1 +1,37 @@
-<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" /><stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" /></linearGradient></defs><rect x="0" y="0" width="144" height="144" rx="24" fill="#111827"/><path d="M72 24L113.569 48V96L72 120L30.4308 96V48L72 24Z" fill="url(#grad)"/><path d="M52 56V88M52 72H92M92 56V88" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="innerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C4B5FD"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="144" height="144" rx="24" fill="url(#bgGrad)"/>
+  <!-- Outer hexagon with glow -->
+  <path d="M72 22L116 47V97L72 122L28 97V47Z" fill="url(#hexGrad)" opacity="0.15"/>
+  <path d="M72 28L110 50V94L72 116L34 94V50Z" fill="url(#hexGrad)" filter="url(#glow)"/>
+  <!-- LM text stylized -->
+  <text x="72" y="82" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="38" fill="white" letter-spacing="-2">LM</text>
+  <!-- Decorative nodes at vertices -->
+  <circle cx="72" cy="28" r="4" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="110" cy="50" r="4" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="110" cy="94" r="4" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="72" cy="116" r="4" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="34" cy="94" r="4" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="34" cy="50" r="4" fill="#C4B5FD" opacity="0.7"/>
+</svg>

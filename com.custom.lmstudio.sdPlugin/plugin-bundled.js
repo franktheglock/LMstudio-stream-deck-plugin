@@ -3665,34 +3665,51 @@ var connectionParams = null;
 var modelStatusContexts = /* @__PURE__ */ new Set();
 var statusInterval = null;
 function generateStatusSvg(modelName, isLoaded, isRunning, memoryInfo, instance) {
-  const color = isRunning ? isLoaded ? "#4CAF50" : "#FFC107" : "#F44336";
-  const statusText = isRunning ? isLoaded ? "Loaded" : "No Model" : "Stopped";
+  const statusColor = isRunning ? isLoaded ? "#34D399" : "#FBBF24" : "#F87171";
+  const statusBg = isRunning ? isLoaded ? "#065F46" : "#78350F" : "#7F1D1D";
+  const statusText = isRunning ? isLoaded ? "LOADED" : "NO MODEL" : "STOPPED";
+  const hexStroke = isRunning ? isLoaded ? "#7C3AED" : "#D97706" : "#991B1B";
+  const hexFill = isRunning ? isLoaded ? "#1E1B4B" : "#1C1917" : "#1C1417";
   const displayName = modelName || "LM Studio";
   let line1 = displayName;
   let line2 = "";
-  if (displayName.length > 12) {
-    line1 = displayName.substring(0, 12);
-    line2 = displayName.substring(12, 24);
+  if (displayName.length > 13) {
+    const mid = Math.min(13, displayName.length);
+    line1 = displayName.substring(0, mid);
+    line2 = displayName.substring(mid, mid + 13);
+    if (displayName.length > mid + 13) line2 += "\u2026";
   }
-  let vramText = "";
-  let contextText = "";
-  if (isLoaded && memoryInfo && instance) {
-    if (memoryInfo.ram && memoryInfo.ram.used > 0) {
+  let infoLine = "";
+  if (isLoaded && instance) {
+    const parts = [];
+    if (memoryInfo && memoryInfo.ram && memoryInfo.ram.used > 0) {
       const vramGB = (memoryInfo.ram.used / (1024 * 1024 * 1024)).toFixed(1);
-      vramText = `VRAM: ${vramGB}GB`;
+      parts.push(`${vramGB}GB`);
     }
     if (instance.context_length) {
-      contextText = `Ctx: ${instance.context_length}`;
+      parts.push(`${instance.context_length} ctx`);
     }
+    infoLine = parts.join(" \xB7 ");
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
-    <rect width="144" height="144" fill="#1d1d1d" />
-    <circle cx="72" cy="72" r="65" stroke="${color}" stroke-width="4" fill="none" opacity="0.4" />
-    <text x="72" y="45" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">${line1}</text>
-    <text x="72" y="65" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">${line2}</text>
-    <text x="72" y="105" font-family="Arial" font-size="20" fill="${color}" text-anchor="middle" font-weight="bold">${statusText}</text>
-    ${vramText ? `<text x="72" y="125" font-family="Arial" font-size="12" fill="#aaaaaa" text-anchor="middle">${vramText}</text>` : ""}
-    ${contextText ? `<text x="72" y="138" font-family="Arial" font-size="12" fill="#aaaaaa" text-anchor="middle">${contextText}</text>` : ""}
+    <defs>
+      <linearGradient id="sBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#1E1B4B"/>
+        <stop offset="100%" stop-color="#0F172A"/>
+      </linearGradient>
+      <filter id="sGlow">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="144" height="144" rx="18" fill="url(#sBg)"/>
+    <path d="M72 16L110 38V82L72 104L34 82V38Z" stroke="${hexStroke}" stroke-width="3" fill="${hexFill}" opacity="0.6"/>
+    <text x="72" y="${line2 ? "42" : "50"}" font-family="Arial, sans-serif" font-size="14" fill="#E2E8F0" text-anchor="middle" font-weight="700">${line1}</text>
+    ${line2 ? `<text x="72" y="58" font-family="Arial, sans-serif" font-size="14" fill="#E2E8F0" text-anchor="middle" font-weight="700">${line2}</text>` : ""}
+    <circle cx="72" cy="74" r="4" fill="${statusColor}" filter="url(#sGlow)"/>
+    <rect x="28" y="96" width="88" height="22" rx="11" fill="${statusBg}" opacity="0.7"/>
+    <text x="72" y="111" font-family="Arial, sans-serif" font-size="12" fill="${statusColor}" text-anchor="middle" font-weight="700">${statusText}</text>
+    ${infoLine ? `<text x="72" y="136" font-family="Arial, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">${infoLine}</text>` : ""}
     </svg>`;
 }
 async function updateAllModelStatus() {

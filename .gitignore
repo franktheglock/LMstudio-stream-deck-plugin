@@ -16,3 +16,4 @@ AppData/
 *.bat
 !install-streamdeck.bat
 !install-streamdock.bat
+preview.html

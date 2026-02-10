@@ -1,1 +1,23 @@
-<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="144" height="144" rx="18" fill="#450A0A"/><circle cx="72" cy="72" r="40" stroke="#F87171" stroke-width="8" fill="none"/><path d="M72 32V72" stroke="#F87171" stroke-width="8" stroke-linecap="round"/></svg>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="offBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#450A0A"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+  <rect width="144" height="144" rx="18" fill="url(#offBg)"/>
+  <!-- Server rack - inactive state -->
+  <rect x="36" y="28" width="72" height="28" rx="6" stroke="#991B1B" stroke-width="3" fill="#1C1417"/>
+  <rect x="36" y="62" width="72" height="28" rx="6" stroke="#991B1B" stroke-width="3" fill="#1C1417"/>
+  <!-- Inactive drive indicators - dim red -->
+  <circle cx="52" cy="42" r="4" fill="#7F1D1D" opacity="0.6"/>
+  <circle cx="64" cy="42" r="4" fill="#7F1D1D" opacity="0.4"/>
+  <rect x="84" y="38" width="16" height="8" rx="2" fill="#7F1D1D" opacity="0.3"/>
+  <circle cx="52" cy="76" r="4" fill="#7F1D1D" opacity="0.6"/>
+  <circle cx="64" cy="76" r="4" fill="#7F1D1D" opacity="0.4"/>
+  <rect x="84" y="72" width="16" height="8" rx="2" fill="#7F1D1D" opacity="0.3"/>
+  <!-- Status: OFFLINE badge -->
+  <rect x="26" y="100" width="92" height="24" rx="12" fill="#7F1D1D" opacity="0.5"/>
+  <circle cx="46" cy="112" r="4" fill="#F87171" opacity="0.6"/>
+  <text x="84" y="117" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="13" fill="#FCA5A5">OFFLINE</text>
+</svg>

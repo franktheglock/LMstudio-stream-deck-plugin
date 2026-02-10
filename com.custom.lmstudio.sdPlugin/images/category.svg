@@ -1,1 +1,40 @@
-<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="144" height="144" rx="24" fill="#1F2937"/><path d="M72 32L106.641 52V92L72 112L37.359 92V52L72 32Z" stroke="#8B5CF6" stroke-width="8" fill="none"/><circle cx="72" cy="72" r="16" fill="#8B5CF6"/><circle cx="72" cy="32" r="6" fill="#A78BFA"/><circle cx="106.6" cy="52" r="6" fill="#A78BFA"/><circle cx="106.6" cy="92" r="6" fill="#A78BFA"/><circle cx="72" cy="112" r="6" fill="#A78BFA"/><circle cx="37.4" cy="92" r="6" fill="#A78BFA"/><circle cx="37.4" cy="52" r="6" fill="#A78BFA"/></svg>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="catBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="catHex" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="catGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="144" height="144" rx="24" fill="url(#catBg)"/>
+  <!-- Neural network hexagon -->
+  <path d="M72 30L108 51V93L72 114L36 93V51Z" stroke="url(#catHex)" stroke-width="5" fill="none" filter="url(#catGlow)"/>
+  <!-- Center brain-like circle -->
+  <circle cx="72" cy="72" r="18" fill="url(#catHex)" opacity="0.9"/>
+  <!-- Neural connections from center to vertices -->
+  <line x1="72" y1="54" x2="72" y2="30" stroke="#A78BFA" stroke-width="2" opacity="0.5"/>
+  <line x1="88" y1="63" x2="108" y2="51" stroke="#A78BFA" stroke-width="2" opacity="0.5"/>
+  <line x1="88" y1="81" x2="108" y2="93" stroke="#A78BFA" stroke-width="2" opacity="0.5"/>
+  <line x1="72" y1="90" x2="72" y2="114" stroke="#A78BFA" stroke-width="2" opacity="0.5"/>
+  <line x1="56" y1="81" x2="36" y2="93" stroke="#A78BFA" stroke-width="2" opacity="0.5"/>
+  <line x1="56" y1="63" x2="36" y2="51" stroke="#A78BFA" stroke-width="2" opacity="0.5"/>
+  <!-- Vertex nodes -->
+  <circle cx="72" cy="30" r="6" fill="#C4B5FD"/>
+  <circle cx="108" cy="51" r="6" fill="#C4B5FD"/>
+  <circle cx="108" cy="93" r="6" fill="#C4B5FD"/>
+  <circle cx="72" cy="114" r="6" fill="#C4B5FD"/>
+  <circle cx="36" cy="93" r="6" fill="#C4B5FD"/>
+  <circle cx="36" cy="51" r="6" fill="#C4B5FD"/>
+  <!-- Center dot -->
+  <circle cx="72" cy="72" r="6" fill="white"/>
+</svg>
