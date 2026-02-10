@@ -54,11 +54,7 @@ For users with Elgato Stream Deck hardware:
    - Example: double-click `install-streamdeck.bat` or run from PowerShell:
      `.\install-streamdeck.bat`
 
-2. **Option A: Double-click Installation**
-   - Double-click the `com.custom.lmstudio.streamDeckPlugin` file
-   - Stream Deck will automatically install it
-
-3. **Option B: Manual Installation**
+2. **Manual Installation**
    - Copy the `com.custom.lmstudio.sdPlugin` folder to:
      - **Windows:** `%appdata%\Elgato\StreamDeck\Plugins\`
      - **macOS:** `~/Library/Application Support/com.elgato.StreamDeck/Plugins/`
