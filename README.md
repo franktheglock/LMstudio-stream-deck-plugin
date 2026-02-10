@@ -66,10 +66,10 @@ For users with Elgato Stream Deck hardware:
 
 #### HotSpot StreamDock (AmpliGame Hardware - Windows)
 For users with AmpliGame StreamDock hardware:
-1. **Recommended: Installer (Windows)**
+1. ~~**Recommended: Installer (Windows)** 
    - Run `install-streamdock.bat` from the repository root to automatically copy the plugin into StreamDock's plugins directory and attempt a restart of the StreamDock app.
    - Example: double-click `install-streamdock.bat` or run from PowerShell:
-     `.\install-streamdock.bat`
+     `.\install-streamdock.bat`~~ **CURRENTLY BROKEN** (will try to fix later) 
 
 2. **Manual Installation**
    - Copy the `com.custom.lmstudio.sdPlugin` folder to:
