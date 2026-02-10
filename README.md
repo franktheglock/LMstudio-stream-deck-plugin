@@ -31,6 +31,15 @@ A comprehensive Stream Deck plugin for controlling [LM Studio](https://lmstudio.
 
 ## Installation
 
+### Download the Repository
+
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/franktheglock/LMstudio-stream-deck-plugin.git
+cd LMstudio-stream-deck-plugin
+```
+
 ### Prerequisites
 - [Elgato Stream Deck Software](https://www.elgato.com/downloads) (version 6.0 or higher)
 - [LM Studio](https://lmstudio.ai) installed and running

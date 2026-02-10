@@ -1,5 +1,14 @@
 # Installation Guide
 
+## Step 0: Download the Repository
+
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/franktheglock/LMstudio-stream-deck-plugin.git
+cd LMstudio-stream-deck-plugin
+```
+
 ## Step 1: Prepare the Plugin
 
 Your plugin is ready in the folder:
